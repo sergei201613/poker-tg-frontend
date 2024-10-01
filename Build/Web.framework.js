@@ -1266,10 +1266,10 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  6937040: () => { Module['emscripten_get_now_backup'] = performance.now; },  
- 6937095: ($0) => { performance.now = function() { return $0; }; },  
- 6937143: ($0) => { performance.now = function() { return $0; }; },  
- 6937191: () => { performance.now = Module['emscripten_get_now_backup']; }
+  6937136: () => { Module['emscripten_get_now_backup'] = performance.now; },  
+ 6937191: ($0) => { performance.now = function() { return $0; }; },  
+ 6937239: ($0) => { performance.now = function() { return $0; }; },  
+ 6937287: () => { performance.now = Module['emscripten_get_now_backup']; }
 };
 
 
@@ -7949,9 +7949,7 @@ var ASM_CONSTS = {
 
   function _OpenInvoice(link) {
       window.Telegram.WebApp.openInvoice(UTF8ToString(link), function(status) {
-        console.log("321321321")
-        MyGameInstance.SendMessage("TelegramInteraction", "OnPurchaseClosed", status)
-        console.log("dsadasdasdasdasd")
+        MyGameInstance.SendMessage("TelegramInteraction", "OnInvoiceClosed", status)
       });
     }
 
