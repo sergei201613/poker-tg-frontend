@@ -7948,7 +7948,9 @@ var ASM_CONSTS = {
   	}
 
   function _OpenInvoice(link) {
-      window.Telegram.WebApp.openInvoice(UTF8ToString(link));
+      window.Telegram.WebApp.openInvoice(UTF8ToString(link), function(status) {
+        window.alert(status)
+      });
     }
 
   var webSocketState = {instances:{},lastId:0,onOpen:null,onMessage:null,onError:null,onClose:null,debug:false};
