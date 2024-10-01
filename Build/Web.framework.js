@@ -1266,10 +1266,10 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  6936992: () => { Module['emscripten_get_now_backup'] = performance.now; },  
- 6937047: ($0) => { performance.now = function() { return $0; }; },  
+  6937040: () => { Module['emscripten_get_now_backup'] = performance.now; },  
  6937095: ($0) => { performance.now = function() { return $0; }; },  
- 6937143: () => { performance.now = Module['emscripten_get_now_backup']; }
+ 6937143: ($0) => { performance.now = function() { return $0; }; },  
+ 6937191: () => { performance.now = Module['emscripten_get_now_backup']; }
 };
 
 
@@ -7949,7 +7949,7 @@ var ASM_CONSTS = {
 
   function _OpenInvoice(link) {
       window.Telegram.WebApp.openInvoice(UTF8ToString(link), function(status) {
-        window.alert(status)
+        window.unityInstance.SendMessage("TelegramInteraction", "OnPurchaseClosed", status)
       });
     }
 
