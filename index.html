@@ -72,11 +72,11 @@
       var MyGameInstance = null;
       script.onload = () => {
           createUnityInstance(canvas, config, (progress) => {
-          MyGameInstance = unityInstance;
           spinner.style.display = "none";
           progressBarEmpty.style.display = "";
           progressBarFull.style.width = `${100 * progress}%`;
         }).then((unityInstance) => {
+          MyGameInstance = unityInstance;
           loadingCover.style.display = "none";
           if (canFullscreen) {
             if (!hideFullScreenButton) {
