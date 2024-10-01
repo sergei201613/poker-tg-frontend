@@ -7949,7 +7949,10 @@ var ASM_CONSTS = {
 
   function _OpenInvoice(link) {
       window.Telegram.WebApp.openInvoice(UTF8ToString(link), function(status) {
+        console.log("321321321")
         window.unityInstance.SendMessage("TelegramInteraction", "OnPurchaseClosed", status)
+        unityInstance.SendMessage("TelegramInteraction", "OnPurchaseClosed", status)
+        console.log("dsadasdasdasdasd")
       });
     }
 
