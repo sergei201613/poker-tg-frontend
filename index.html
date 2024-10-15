@@ -77,16 +77,6 @@
           progressBarFull.style.width = `${100 * progress}%`;
         }).then((unityInstance) => {
           MyGameInstance = unityInstance;
-
-	      var tg = window.Telegram.WebApp;
-	      var lang = tg.initDataUnsafe.user.language_code;
-	      var photo = tg.initDataUnsafe.user.photo_url;
-
-	      console.log('lang: ' + lang);
-	      console.log('avatar: ' + photo);
-
-	      MyGameInstance.SendMessage("TelegramInteraction", "Init", lang + " " + photo);
-
           loadingCover.style.display = "none";
           if (canFullscreen) {
             if (!hideFullScreenButton) {

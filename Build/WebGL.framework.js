@@ -1266,10 +1266,10 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  6951024: () => { Module['emscripten_get_now_backup'] = performance.now; },  
- 6951079: ($0) => { performance.now = function() { return $0; }; },  
- 6951127: ($0) => { performance.now = function() { return $0; }; },  
- 6951175: () => { performance.now = Module['emscripten_get_now_backup']; }
+  6951056: () => { Module['emscripten_get_now_backup'] = performance.now; },  
+ 6951111: ($0) => { performance.now = function() { return $0; }; },  
+ 6951159: ($0) => { performance.now = function() { return $0; }; },  
+ 6951207: () => { performance.now = Module['emscripten_get_now_backup']; }
 };
 
 
@@ -1644,6 +1644,13 @@ var ASM_CONSTS = {
         HEAPF64[totalJSptr] = NaN;
         HEAPF64[usedJSptr] = NaN;
       }
+    }
+
+  function _GetUserData() {
+      var tg = window.Telegram.WebApp;
+      var lang = tg.initDataUnsafe.user.language_code;
+      var photo = tg.initDataUnsafe.user.photo_url;
+      MyGameInstance.SendMessage("TelegramInteraction", "Init", lang + " " + photo);
     }
 
   function _IngameDebugConsoleCancelCopy()
@@ -17711,6 +17718,7 @@ function checkIncomingModuleAPI() {
 var wasmImports = {
   "GetJSLoadTimeInfo": _GetJSLoadTimeInfo,
   "GetJSMemoryInfo": _GetJSMemoryInfo,
+  "GetUserData": _GetUserData,
   "IngameDebugConsoleCancelCopy": _IngameDebugConsoleCancelCopy,
   "IngameDebugConsoleStartCopy": _IngameDebugConsoleStartCopy,
   "JS_Accelerometer_IsRunning": _JS_Accelerometer_IsRunning,
