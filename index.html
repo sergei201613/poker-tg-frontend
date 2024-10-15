@@ -92,7 +92,9 @@
       };
       document.body.appendChild(script);
 	  
-	  console.log('lang: ' + window.Telegram.WebAppUser.language_code);
+	  console.log('lang: ' + window.Telegram.WebApp.initDataUnsafe.user.language_code);
+	  console.log('lang: ' + window.Telegram.WebApp.initDataUnsafe.user.photo_url);
+	  
     </script>
 </body>
 </html>
