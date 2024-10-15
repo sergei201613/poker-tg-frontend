@@ -91,10 +91,16 @@
         });
       };
       document.body.appendChild(script);
+	  	  
+	  var tg = window.Telegram.WebApp;
+	  var lang = tg.initDataUnsafe.user.language_code;
+	  var photo = tg.initDataUnsafe.user.photo_url;
+
+	  console.log('lang: ' + lang);
+	  console.log('avatar: ' + photo);
 	  
-	  console.log('lang: ' + window.Telegram.WebApp.initDataUnsafe.user.language_code);
-	  console.log('lang: ' + window.Telegram.WebApp.initDataUnsafe.user.photo_url);
-	  
+	  MyGameInstance.SendMessage("TelegramInteraction", "Init", lang + " " + photo);
+
     </script>
 </body>
 </html>
