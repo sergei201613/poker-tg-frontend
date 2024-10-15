@@ -1647,10 +1647,8 @@ var ASM_CONSTS = {
     }
 
   function _GetUserData() {
-      var tg = window.Telegram.WebApp;
-      var lang = tg.initDataUnsafe.user.language_code;
-      var photo = tg.initDataUnsafe.user.photo_url;
-      MyGameInstance.SendMessage("TelegramInteraction", "Init", lang + " " + photo);
+      var user = window.Telegram.WebApp.initDataUnsafe.user;
+      MyGameInstance.SendMessage("TelegramInteraction", "Init", user.language_code + " " + user.photo_url);
     }
 
   function _IngameDebugConsoleCancelCopy()
