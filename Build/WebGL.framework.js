@@ -1266,10 +1266,10 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  6989664: () => { Module['emscripten_get_now_backup'] = performance.now; },  
- 6989719: ($0) => { performance.now = function() { return $0; }; },  
- 6989767: ($0) => { performance.now = function() { return $0; }; },  
- 6989815: () => { performance.now = Module['emscripten_get_now_backup']; }
+  6990048: () => { Module['emscripten_get_now_backup'] = performance.now; },  
+ 6990103: ($0) => { performance.now = function() { return $0; }; },  
+ 6990151: ($0) => { performance.now = function() { return $0; }; },  
+ 6990199: () => { performance.now = Module['emscripten_get_now_backup']; }
 };
 
 
@@ -1628,7 +1628,7 @@ var ASM_CONSTS = {
     }
 
   function _GetInitData() {
-      MyGameInstance.SendMessage("TelegramInteraction", "SetInitData", window.Telegram.WebApp.initData);
+      return window.Telegram.WebApp.initData;
     }
 
   function _GetJSLoadTimeInfo(loadTimePtr) {
