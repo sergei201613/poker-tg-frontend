@@ -1628,7 +1628,7 @@ var ASM_CONSTS = {
     }
 
   function _GetInitData() {
-      return window.Telegram.WebApp.initData;
+      MyGameInstance.SendMessage("TelegramInteraction", "SetInitData", window.Telegram.WebApp.initData);
     }
 
   function _GetJSLoadTimeInfo(loadTimePtr) {
