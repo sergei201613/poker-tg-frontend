@@ -31,6 +31,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url(../bg.png);
+    background-size: cover;
+    background-position: bottom;
 }
 #unity-loading-bar {
     flex: 1 1 auto;
@@ -46,17 +49,30 @@ body {
     max-width: 80%;
 }
 #unity-progress-bar-empty {
-    width: 80%;
-    height: 24px;
-    margin: 10px 20px 20px 10px;
+    height: 26px;
+    margin: 10px;
     text-align: left;
     border: 1px solid white;
-    padding: 2px;
+    padding: 3px;
+    border-radius: 100px;
+    background-color: white;
+}
+#progress-bar {
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    background-color: #071A21;
+    border-radius: 20px 20px 0 0;
 }
 #unity-progress-bar-full {
     width: 0%;
     height: 100%;
-    background: white;
+    background-image: url(../bar.png);
+}
+#progress-bar-full-container {
+    overflow: hidden;
+    height: 100%;
+    border-radius: 100px;
 }
 .light #unity-progress-bar-empty {
     border-color: black;
