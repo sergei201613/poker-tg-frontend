@@ -27,7 +27,6 @@
         </div>
     </div>
     <script>
-      const hideFullScreenButton = "true";
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -45,23 +44,7 @@
       const loadingCover = document.querySelector("#loading-cover");
       const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
       const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
       const spinner = document.querySelector('.spinner');
-
-      const canFullscreen = (function() {
-        for (const key of [
-            'exitFullscreen',
-            'webkitExitFullscreen',
-            'webkitCancelFullScreen',
-            'mozCancelFullScreen',
-            'msExitFullscreen',
-          ]) {
-          if (key in document) {
-            return true;
-          }
-        }
-        return false;
-      }());
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         container.className = "unity-mobile";
@@ -80,14 +63,6 @@
         }).then((unityInstance) => {
           MyGameInstance = unityInstance;
           loadingCover.style.display = "none";
-          if (canFullscreen) {
-            if (!hideFullScreenButton) {
-              fullscreenButton.style.display = "";
-            }
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-            };
-          }
         }).catch((message) => {
           alert(message);
         });
