@@ -27,33 +27,6 @@
         </div>
     </div>
     <script>
-        // @TestCode -----------------------------------------------------
-        const getHackNum = () => {
-            return null;
-        };
-
-        document.addEventListener("focusin", (e) => {
-            const target = e.target;
-            if (
-                ((target && /input|textarea/i.test(target.tagName)) ||
-                    target.contentEditable === "true") &&
-                !target.dataset.hack
-            ) {
-                target.dataset.hack = "1";
-                const getBoundingClientRect = target.getBoundingClientRect;
-                target.getBoundingClientRect = () => {
-                    const result = getBoundingClientRect.call(target);
-                    if (document.activeElement === target) {
-                        return {
-                            ...result,
-                            top: getHackNum(),
-                        };
-                    }
-                    return result;
-                };
-            }
-        });
-        //------------------------------------------------------------------
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -63,7 +36,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.136",
+        productVersion: "0.1.137",
       };
 
       const container = document.querySelector("#unity-container");
