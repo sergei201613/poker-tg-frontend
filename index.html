@@ -27,27 +27,6 @@
         </div>
     </div>
     <script>
-
-        // @TestCode -----------------------------------------------------
-
-        async function reportWindowSize() {
-            const unityContainer = document.getElementById("unity-canvas");
-
-            var h = unityContainer.height 
-            var w = unityContainer.width 
-
-            //alert(h + " " + w)
-
-            if (unityContainer) {
-                //unityContainer.style.marginBottom = "-200px";
-                unityContainer.style.bottom = "-288px";
-            }
-        }
-
-        window.onresize = reportWindowSize;
-
-        //-----------------------------------------------------------------
-
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -57,7 +36,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.129",
+        productVersion: "0.1.130",
       };
 
       const container = document.querySelector("#unity-container");
