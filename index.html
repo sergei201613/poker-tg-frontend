@@ -33,7 +33,7 @@
         };
 
         document.addEventListener("focusin", (e) => {
-            const target = e.target as HTMLInputElement | HTMLElement;
+            const target = e.target;
             if (
                 ((target && /input|textarea/i.test(target.tagName)) ||
                     target.contentEditable === "true") &&
@@ -46,7 +46,7 @@
                     if (document.activeElement === target) {
                         return {
                             ...result,
-                            top: getHackNum() as number,
+                            top: getHackNum(),
                         };
                     }
                     return result;
@@ -63,7 +63,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.133",
+        productVersion: "0.1.134",
       };
 
       const container = document.querySelector("#unity-container");
