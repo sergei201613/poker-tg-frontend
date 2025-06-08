@@ -29,8 +29,9 @@
     <script>
 
         function reportWindowSize() {
-            heightOutput.textContent = window.innerHeight;
-            widthOutput.textContent = window.innerWidth;
+            var h = window.innerHeight
+            var w = window.innerWidth
+            alert(h + " " + w)
         }
 
         window.onresize = reportWindowSize;
@@ -44,7 +45,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.112",
+        productVersion: "0.1.113",
       };
 
       const container = document.querySelector("#unity-container");
