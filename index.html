@@ -30,13 +30,17 @@
 
         // @TestCode -----------------------------------------------------
 
-        function reportWindowSize() {
+        async function reportWindowSize() {
             const unityContainer = document.getElementById("unity-canvas");
 
             var h = unityContainer.height 
             var w = unityContainer.width 
 
-            alert(h + " " + w)
+            //alert(h + " " + w)
+
+            unityContainer.height = 2124;
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             unityContainer.height = 2124;
 
@@ -59,7 +63,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.125",
+        productVersion: "0.1.126",
       };
 
       const container = document.querySelector("#unity-container");
