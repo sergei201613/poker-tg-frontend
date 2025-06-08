@@ -28,19 +28,23 @@
     </div>
     <script>
 
+        // @TestCode -----------------------------------------------------
+
         function reportWindowSize() {
             var h = window.innerHeight
             var w = window.innerWidth
             alert(h + " " + w)
         }
 
-        window.onresize = reportWindowSize;
+        //window.onresize = reportWindowSize;
 
         const unityContainer = document.getElementById("unity-container");
 
         if (unityContainer) {
             unityContainer.style.marginBottom = "-288px";
         }
+
+        //-----------------------------------------------------------------
 
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
@@ -51,7 +55,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.114",
+        productVersion: "0.1.115",
       };
 
       const container = document.querySelector("#unity-container");
