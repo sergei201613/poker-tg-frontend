@@ -36,6 +36,12 @@
 
         window.onresize = reportWindowSize;
 
+        const unityContainer = document.getElementById("unity-container");
+
+        if (unityContainer) {
+            unityContainer.style.marginBottom = "-288px";
+        }
+
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -45,7 +51,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.113",
+        productVersion: "0.1.114",
       };
 
       const container = document.querySelector("#unity-container");
