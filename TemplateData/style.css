@@ -6,6 +6,8 @@ html {
 }
 html, body {
     height: 100%;
+    /*width: 100%;*/
+    position: fixed;
 }
 canvas {
     display: block;
@@ -16,7 +18,6 @@ body {
 #unity-container {
     width: 100%;
     height: 100%;
-    position: fixed;
 }
 #unity-canvas {
     width: 100%;
