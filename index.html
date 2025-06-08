@@ -27,6 +27,14 @@
         </div>
     </div>
     <script>
+
+        function reportWindowSize() {
+            heightOutput.textContent = window.innerHeight;
+            widthOutput.textContent = window.innerWidth;
+        }
+
+        window.onresize = reportWindowSize;
+
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -36,7 +44,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.111",
+        productVersion: "0.1.112",
       };
 
       const container = document.querySelector("#unity-container");
