@@ -28,8 +28,9 @@
     </div>
     <script>
 
-        // @TestCode
-        window.Telegram.WebApp.requestFullscreen();
+        var tg = window.Telegram.WebApp;
+        tg.requestFullscreen();
+        tg.setBackgroundColor(color);
 
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
@@ -40,7 +41,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.159",
+        productVersion: "0.1.160",
       };
 
       const container = document.querySelector("#unity-container");
