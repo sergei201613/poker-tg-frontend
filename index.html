@@ -27,6 +27,10 @@
         </div>
     </div>
     <script>
+
+        // @TestCode
+        window.Telegram.WebApp.requestFullscreen();
+
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -36,7 +40,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.158",
+        productVersion: "0.1.159",
       };
 
       const container = document.querySelector("#unity-container");
