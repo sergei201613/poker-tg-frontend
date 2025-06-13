@@ -8,6 +8,11 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        var tg = window.Telegram.WebApp;
+        tg.requestFullscreen();
+        tg.setBackgroundColor("#04151C");
+    </script>
 </head>
 <body class="dark">
     <div id="unity-container" class="unity-desktop">
@@ -28,10 +33,6 @@
     </div>
     <script>
 
-        var tg = window.Telegram.WebApp;
-        tg.requestFullscreen();
-        tg.setBackgroundColor("#04151C");
-
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/Web.loader.js";
       const config = {
@@ -41,7 +42,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "0.1.161",
+        productVersion: "0.1.162",
       };
 
       const container = document.querySelector("#unity-container");
