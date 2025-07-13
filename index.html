@@ -1,20 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=overlays-content">
+    <title>Poker</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
-</head>
-<body>
-    <h1>Hello!</h1>
     <script>
-        // Initialize the ad engine and get the SHOW method to display ads
-        window.initCdTma?.({ id: '6081640' }).then(show => window.show = show).catch(e => console.log(e))
-	</script>
-	<button onclick="window.show?.().then(() => console.log('tma ad played')).catch(e => console.log(e))">
-		Play Ad
-	</button>
+        var tg = window.Telegram.WebApp;
+        tg.requestFullscreen();
+    </script>
+</head>
+<body class="dark">
+    <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas"></canvas>
+    </div>
+    <div id="loading-cover" style="display:none;">
+        <div id="unity-loading-bar">
+            <div id="unity-logo"><img src="logo.png"></div>
+            <div class="spinner"></div>
+        </div>
+        <div id="progress-bar">
+            <div id="unity-progress-bar-empty" style="display: none;">
+                <div id="progress-bar-full-container">
+                    <div id="unity-progress-bar-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/Web.loader.js";
+      const config = {
+        dataUrl: buildUrl + "/Web.data.unityweb",
+        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
+        codeUrl: buildUrl + "/Web.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Poker",
+        productVersion: "0.1.296.c2.s1",
+      };
+
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const spinner = document.querySelector('.spinner');
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+      }
+      loadingCover.style.display = "";
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+
+      var MyGameInstance = null;
+      script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = `${100 * progress}%`;
+        }).then((unityInstance) => {
+          MyGameInstance = unityInstance;
+          // We're calling this from unity code.
+          //loadingCover.style.display = "none";
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+
+        // My stuff here.
+
+        const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
+        const moduleName = "FaceStarServer"
+
+        // This variables will be accessed from the unity code, so don't rename or delete.
+        let authTokens = ""
+        let fortuneWheelInfo = ""
+        let availablePurchases = ""
+        let playerBalance = ""
+        let dailyRewardInfo = ""
+
+        init()
+
+        async function init() {
+            try {
+                // TODO @Med: review code.
+                var initData = window.Telegram.WebApp.initData;
+
+                authTokens = await fetchAuthTokens(initData);
+                const [authToken, sessionToken, playerId] = authTokens.split(" ");
+
+                const results = await Promise.allSettled([
+                    fetchFortuneWheelInfo(authToken),
+                    fetchAvailablePurchases(authToken),
+                    fetchPlayerBalance(authToken, playerId),
+                    fetchDailyReward(authToken)
+                ]);
+
+                fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
+                availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
+                playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
+                dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
+
+                console.log('Fortune Wheel Info:', fortuneWheelInfo);
+                console.log('Available Purchases:', availablePurchases);
+                console.log('Player Balance:', playerBalance);
+                console.log('Daily Reward Info:', dailyRewardInfo);
+            } catch (e) {
+                console.error('Error in init():', error);
+            }
+        }
+
+        async function fetchPlayerBalance(authToken, playerId) {
+            try {
+                const response = await fetch(`https://economy.services.api.unity.com/v2/projects/${projectId}/players/${playerId}/currencies`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                return await response.text();
+            } catch (error) {
+                console.error('Error in fetchPlayerBalance():', error);
+                return "";
+            }
+        }
+
+        async function fetchDailyReward(authToken) {
+            try {
+                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/DailyReward`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const text = await response.text();
+                return JSON.parse(text).output;
+            } catch (error) {
+                console.error('Error in fetchDailyReward():', error);
+                return "";
+            }
+        }
+
+        async function fetchAvailablePurchases(authToken) {
+            try {
+                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/GetAvailablePurchases`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const text = await response.text();
+                return JSON.parse(text).output;
+            } catch (error) {
+                console.error('Error in getAvailablePurchases():', error);
+                return "";
+            }
+        }
+
+        async function fetchFortuneWheelInfo(authToken) {
+            try {
+                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/GetForuneWheelInfo`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                // TODO @Low @Perf
+                const text = await response.text();
+                return JSON.parse(text).output;
+            } catch (error) {
+                console.error('Error in fetchFortuneWheelInfo():', error);
+                return "";
+            }
+        }
+
+        async function fetchAuthTokens(initData) {
+            try {
+                const response = await fetch('https://pokertg.com/auth/tg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(initData)
+                });
+                return await response.text();
+            } catch (error) {
+                console.error('Error in fetchAuthTokens():', error);
+                return "";
+            }
+        }
+    </script>
 </body>
 </html>
