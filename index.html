@@ -12,6 +12,7 @@
         var tg = window.Telegram.WebApp;
         tg.requestFullscreen();
     </script>
+    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 </head>
 <body class="dark">
     <div id="unity-container" class="unity-desktop">
@@ -86,6 +87,8 @@
         let availablePurchases = ""
         let playerBalance = ""
         let dailyRewardInfo = ""
+
+        window.initCdTma?.({ id: '6081640' }).then(show => window.show = show).catch(e => console.log(e))
 
         init()
 
