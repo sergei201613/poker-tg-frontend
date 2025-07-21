@@ -1,206 +1,127 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=overlays-content">
-    <title>Poker</title>
+    <title>Unity Web Player | tg-miniapp-input-example</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        var tg = window.Telegram.WebApp;
-        tg.requestFullscreen();
-    </script>
-    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
-    <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="349521"></script>
-</head>
-<body class="dark">
+  </head>
+  <body>
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas"></canvas>
-    </div>
-    <div id="loading-cover" style="display:none;">
-        <div id="unity-loading-bar">
-            <div id="unity-logo"><img src="logo.png"></div>
-            <div class="spinner"></div>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
-        <div id="progress-bar">
-            <div id="unity-progress-bar-empty" style="display: none;">
-                <div id="progress-bar-full-container">
-                    <div id="unity-progress-bar-full"></div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">tg-miniapp-input-example</div>
+      </div>
     </div>
     <script>
+      var canvas = document.querySelector("#unity-canvas");
 
-      const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/Web.loader.js";
-      const config = {
-        dataUrl: buildUrl + "/Web.data.unityweb",
-        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-        codeUrl: buildUrl + "/Web.wasm.unityweb",
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Web.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Web.data",
+        frameworkUrl: buildUrl + "/Web.framework.js",
+        codeUrl: buildUrl + "/Web.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
-        productName: "Poker",
-        productVersion: "0.1.296.c5.s1",
+        productName: "tg-miniapp-input-example",
+        productVersion: "0.1.0",
+        showBanner: unityShowBanner,
       };
 
-      const container = document.querySelector("#unity-container");
-      const canvas = document.querySelector("#unity-canvas");
-      const loadingCover = document.querySelector("#loading-cover");
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-      const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const spinner = document.querySelector('.spinner');
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+
+
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
       }
-      loadingCover.style.display = "";
 
-      const script = document.createElement("script");
+      document.querySelector("#unity-loading-bar").style.display = "block";
+
+      var script = document.createElement("script");
       script.src = loaderUrl;
-
-      var MyGameInstance = null;
       script.onload = () => {
-          createUnityInstance(canvas, config, (progress) => {
-          spinner.style.display = "none";
-          progressBarEmpty.style.display = "";
-          progressBarFull.style.width = `${100 * progress}%`;
-        }).then((unityInstance) => {
-          MyGameInstance = unityInstance;
-          // We're calling this from unity code.
-          //loadingCover.style.display = "none";
-        }).catch((message) => {
-          alert(message);
-        });
-      };
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
+
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+
       document.body.appendChild(script);
 
-        // My stuff here.
-
-        const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
-        const moduleName = "FaceStarServer"
-
-        // This variables will be accessed from the unity code, so don't rename or delete.
-        let authTokens = ""
-        let fortuneWheelInfo = ""
-        let availablePurchases = ""
-        let playerBalance = ""
-        let dailyRewardInfo = ""
-
-        window.initCdTma?.({ id: '6081640' }).then(show => window.show = show).catch(e => console.log(e))
-
-        init()
-
-        async function init() {
-            try {
-                // TODO @Med: review code.
-                var initData = window.Telegram.WebApp.initData;
-
-                authTokens = await fetchAuthTokens(initData);
-                const [authToken, sessionToken, playerId] = authTokens.split(" ");
-
-                const results = await Promise.allSettled([
-                    fetchFortuneWheelInfo(authToken),
-                    fetchAvailablePurchases(authToken),
-                    fetchPlayerBalance(authToken, playerId),
-                    fetchDailyReward(authToken)
-                ]);
-
-                fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
-                availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
-                playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
-                dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
-
-                console.log('Fortune Wheel Info:', fortuneWheelInfo);
-                console.log('Available Purchases:', availablePurchases);
-                console.log('Player Balance:', playerBalance);
-                console.log('Daily Reward Info:', dailyRewardInfo);
-            } catch (e) {
-                console.error('Error in init():', error);
-            }
-        }
-
-        async function fetchPlayerBalance(authToken, playerId) {
-            try {
-                const response = await fetch(`https://economy.services.api.unity.com/v2/projects/${projectId}/players/${playerId}/currencies`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                return await response.text();
-            } catch (error) {
-                console.error('Error in fetchPlayerBalance():', error);
-                return "";
-            }
-        }
-
-        async function fetchDailyReward(authToken) {
-            try {
-                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/DailyReward`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                const text = await response.text();
-                return JSON.parse(text).output;
-            } catch (error) {
-                console.error('Error in fetchDailyReward():', error);
-                return "";
-            }
-        }
-
-        async function fetchAvailablePurchases(authToken) {
-            try {
-                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/GetAvailablePurchases`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                const text = await response.text();
-                return JSON.parse(text).output;
-            } catch (error) {
-                console.error('Error in getAvailablePurchases():', error);
-                return "";
-            }
-        }
-
-        async function fetchFortuneWheelInfo(authToken) {
-            try {
-                const response = await fetch(`https://cloud-code.services.api.unity.com/v1/projects/${projectId}/modules/${moduleName}/GetForuneWheelInfo`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                // TODO @Low @Perf
-                const text = await response.text();
-                return JSON.parse(text).output;
-            } catch (error) {
-                console.error('Error in fetchFortuneWheelInfo():', error);
-                return "";
-            }
-        }
-
-        async function fetchAuthTokens(initData) {
-            try {
-                const response = await fetch('https://pokertg.com/auth/tg', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(initData)
-                });
-                return await response.text();
-            } catch (error) {
-                console.error('Error in fetchAuthTokens():', error);
-                return "";
-            }
-        }
     </script>
-</body>
+  </body>
 </html>
