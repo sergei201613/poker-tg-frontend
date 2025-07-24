@@ -32,55 +32,53 @@
             </div>
         </div>
     </div>
-    <div id="text-input-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999; display: block;">
-        <input type="text" id="unity-text-input" style="padding: 10px; font-size: 16px; border: 2px solid #ccc; border-radius: 5px; background: rgba(255,255,255,0.9); width: 300px;">
-    </div>
     <script>
 
-      const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/Web.loader.js";
-      const config = {
-        dataUrl: buildUrl + "/Web.data.unityweb",
-        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-        codeUrl: buildUrl + "/Web.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "Poker",
-        productVersion: "0.1.297.c22.s1",
+        const buildUrl = "Build";
+        const loaderUrl = buildUrl + "/Web.loader.js";
+        const config = {
+            dataUrl: buildUrl + "/Web.data.unityweb",
+            frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
+            codeUrl: buildUrl + "/Web.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "Poker",
+            productVersion: "0.1.297.c22.s1",
         };
 
-        alert("1.2.3");
+        const container = document.querySelector("#unity-container");
+        const canvas = document.querySelector("#unity-canvas");
+        const loadingCover = document.querySelector("#loading-cover");
+        const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+        const progressBarFull = document.querySelector("#unity-progress-bar-full");
+        const spinner = document.querySelector('.spinner');
 
-      const container = document.querySelector("#unity-container");
-      const canvas = document.querySelector("#unity-canvas");
-      const loadingCover = document.querySelector("#loading-cover");
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-      const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const spinner = document.querySelector('.spinner');
+        canvas.style.height = window.innerHeight + 'px';
+        canvas.height = window.innerHeight + 'px';
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-      }
-      loadingCover.style.display = "";
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            container.className = "unity-mobile";
+        }
+        loadingCover.style.display = "";
 
-      const script = document.createElement("script");
-      script.src = loaderUrl;
+        const script = document.createElement("script");
+        script.src = loaderUrl;
 
-      var MyGameInstance = null;
-      script.onload = () => {
-          createUnityInstance(canvas, config, (progress) => {
-          spinner.style.display = "none";
-          progressBarEmpty.style.display = "";
-          progressBarFull.style.width = `${100 * progress}%`;
-        }).then((unityInstance) => {
-          MyGameInstance = unityInstance;
-          // We're calling this from unity code.
-          //loadingCover.style.display = "none";
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
+        var MyGameInstance = null;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                spinner.style.display = "none";
+                progressBarEmpty.style.display = "";
+                progressBarFull.style.width = `${100 * progress}%`;
+            }).then((unityInstance) => {
+                MyGameInstance = unityInstance;
+                // We're calling this from unity code.
+                //loadingCover.style.display = "none";
+            }).catch((message) => {
+                alert(message);
+            });
+        };
+        document.body.appendChild(script);
 
         // My stuff here.
 
