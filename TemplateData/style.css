@@ -16,6 +16,7 @@ canvas {
     bottom: 0;
     right: 0;
     width: 100%;
+    overflow: clip;
 }
 body {
     margin: 0;

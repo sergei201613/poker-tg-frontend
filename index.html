@@ -34,51 +34,63 @@
     </div>
     <script>
 
-        const buildUrl = "Build";
-        const loaderUrl = buildUrl + "/Web.loader.js";
-        const config = {
-            dataUrl: buildUrl + "/Web.data.unityweb",
-            frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-            codeUrl: buildUrl + "/Web.wasm.unityweb",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "Poker",
-            productVersion: "0.1.297.c22.s1",
-        };
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/Web.loader.js";
+      const config = {
+        dataUrl: buildUrl + "/Web.data.gz",
+        frameworkUrl: buildUrl + "/Web.framework.js.gz",
+        codeUrl: buildUrl + "/Web.wasm.gz",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Poker",
+        productVersion: "0.1.297.c45.s5",
+      };
 
-        const container = document.querySelector("#unity-container");
-        const canvas = document.querySelector("#unity-canvas");
-        const loadingCover = document.querySelector("#loading-cover");
-        const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-        const progressBarFull = document.querySelector("#unity-progress-bar-full");
-        const spinner = document.querySelector('.spinner');
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const spinner = document.querySelector('.spinner');
 
-        canvas.style.height = window.innerHeight + 'px';
-        canvas.height = window.innerHeight + 'px';
 
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            container.className = "unity-mobile";
+        function updateCanvasHeight() {
+            // Important stuff, so the canvas will not be resized by virtual keyboard.
+            //let h = window.innerHeight + 'px'
+            let h = screen.height + 'px'
+            canvas.style.height = h;
+            canvas.height = h;
+            console.log(`updateCanvasHeight: ${h}`);
         }
-        loadingCover.style.display = "";
 
-        const script = document.createElement("script");
-        script.src = loaderUrl;
+        // @Cleanup
+        for (let i = 0; i < 1; i++) {
+            setTimeout(updateCanvasHeight, 60000 * i);
+        }
 
-        var MyGameInstance = null;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                spinner.style.display = "none";
-                progressBarEmpty.style.display = "";
-                progressBarFull.style.width = `${100 * progress}%`;
-            }).then((unityInstance) => {
-                MyGameInstance = unityInstance;
-                // We're calling this from unity code.
-                //loadingCover.style.display = "none";
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+      }
+      loadingCover.style.display = "";
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+
+      var MyGameInstance = null;
+      script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = `${100 * progress}%`;
+        }).then((unityInstance) => {
+          MyGameInstance = unityInstance;
+          // We're calling this from unity code.
+          //loadingCover.style.display = "none";
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
 
         // My stuff here.
 
