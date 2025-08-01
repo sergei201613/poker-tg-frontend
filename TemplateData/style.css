@@ -2,7 +2,7 @@ html {
     box-sizing: border-box;
 }
 input {
-    opacity: 0.1;
+    opacity: 0;
 }
 *, *:before, *:after {
     box-sizing: inherit;
