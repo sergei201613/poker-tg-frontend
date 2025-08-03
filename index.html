@@ -43,7 +43,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "58",
+        productVersion: "59",
       };
 
       const container = document.querySelector("#unity-container");
@@ -59,7 +59,10 @@
                     const element = document.querySelector('div:has(> input)');
                     if (element) {
                         console.log('Element found:', element);
-                        element.focus();
+                        element.classList.add('virtual-keyboard-fix');
+                        setTimeout(() => {
+                            element.classList.remove('virtual-keyboard-fix');
+                        }, 1000);
                     }
                 }
             });
