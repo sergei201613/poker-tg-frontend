@@ -43,7 +43,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "56",
+        productVersion: "57",
       };
 
       const container = document.querySelector("#unity-container");
@@ -53,6 +53,19 @@
       const progressBarFull = document.querySelector("#unity-progress-bar-full");
       const spinner = document.querySelector('.spinner');
 
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes) {
+                    const element = document.querySelector('div:has(> input)');
+                    if (element) {
+                        console.log('Element found:', element);
+                    }
+                }
+            });
+        });
+
+        // Start observing the document body for child additions
+        observer.observe(document.body, { childList: true, subtree: true });
 
         function updateCanvasHeight() {
             // Important stuff, so the canvas will not be resized by virtual keyboard.
