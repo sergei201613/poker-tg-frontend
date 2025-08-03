@@ -3,8 +3,8 @@ html {
 }
 input {
     position: absolute;
-    top: 0;
-    opacity: 0;
+    bottom: 50%;
+    /*opacity: 0;*/
 }
 *, *:before, *:after {
     box-sizing: inherit;
