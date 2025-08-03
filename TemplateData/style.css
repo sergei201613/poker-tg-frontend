@@ -3,7 +3,7 @@ html {
 }
 input {
     position: absolute;
-    bottom: 50%;
+    top: 50vh;
     /*opacity: 0;*/
 }
 *, *:before, *:after {
