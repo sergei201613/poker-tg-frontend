@@ -43,7 +43,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Poker",
-        productVersion: "57",
+        productVersion: "58",
       };
 
       const container = document.querySelector("#unity-container");
@@ -59,6 +59,7 @@
                     const element = document.querySelector('div:has(> input)');
                     if (element) {
                         console.log('Element found:', element);
+                        element.focus();
                     }
                 }
             });
