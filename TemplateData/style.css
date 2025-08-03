@@ -11,6 +11,8 @@ div:has(> input) {
     /* Styles for div elements that are direct parents of inputs */
     bottom: unset !important;
     top: 0 !important;
+
+    opacity: 0;
 }
 *, *:before, *:after {
     box-sizing: inherit;
