@@ -3,6 +3,7 @@ html {
 }
 
 input {
+    /* @Cleanup */
     /*position: absolute;*/
     /*top: 50vh;*/
     /*opacity: 0;*/
@@ -15,6 +16,7 @@ input {
 }
 
 div:has(> input) {
+    /* @Cleanup */
     /* Styles for div elements that are direct parents of inputs */
     /*bottom: unset !important;*/
     /*top: 0 !important;*/
