@@ -1,3 +1,42 @@
+async function sendCodeToSignInWithEmail(email) {
+    try {
+        const request = {
+            Email: email
+        };
+        const response = await fetch(`${origin}/sign-in/email/send-code`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        });
+        console.log('Sign in code requested.');
+        return response;
+    } catch (error) {
+        console.error('Error in sendCodeToSignInWithEmail():', error);
+    }
+}
+
+async function confirmCodeToSignInWithEmail(email, code) {
+    try {
+        const request = {
+            Email: email,
+            Code: code
+        };
+        const response = await fetch(`${origin}/sign-in/email/confirm-code`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        });
+        console.log('Sign in code confirmed.');
+        return response;
+    } catch (error) {
+        console.error('Error in confirmCodeToSignInWithEmail():', error);
+    }
+}
+
 async function fetchPlayerBalance(authToken, playerId) {
     try {
         const response = await fetch(`https://economy.services.api.unity.com/v2/projects/${projectId}/players/${playerId}/currencies`, {
@@ -64,7 +103,7 @@ async function fetchFortuneWheelInfo(authToken) {
 
 async function fetchAuthTokens(initData) {
     try {
-        const response = await fetch('https://pokertg.com/auth/tg', {
+        const response = await fetch(`${origin}/auth/tg`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,7 +119,7 @@ async function fetchAuthTokens(initData) {
 
 async function fetchAuthTokensForBrowser(authData) {
     try {
-        const response = await fetch('https://pokertg.com/auth/site-tg', {
+        const response = await fetch(`${origin}/auth/site-tg`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

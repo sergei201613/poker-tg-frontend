@@ -10,12 +10,9 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        var tg = window.Telegram.WebApp;
-        tg.requestFullscreen(); </script>
+
     <script src="api-client.js"></script>
-    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
-    <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="349521"></script>
+    <script src="utility.js"></script>
 </head>
 
 <body class="dark">
@@ -24,8 +21,19 @@
     </div>
     <div id="loading-cover" style="display:none;">
         <div id="unity-loading-bar">
-            <div id="unity-logo"><img src="logo.png"></div>
+            <div class="logo" id="unity-logo"><img src="Logo_Dynamic.png"></div>
+            <div class="logo"><img src="Logo_Static.png"></div>
             <div class="spinner"></div>
+        </div>
+        <div class="sign-in-with-telegram-container">
+            <input type="email" id="emailInput" placeholder="Email">
+            <button id="sendCodeButton">Send Code</button>
+            <input hidden type="text" id="codeInput" placeholder="Code">
+            <button hidden id="signInButton">Sign In</button>
+        </div>
+        <div class="text-under-sign-in">
+            Play for free. <br>
+            No risks, no money.
         </div>
         <div id="progress-bar">
             <div id="unity-progress-bar-empty" style="display: none;">
@@ -40,13 +48,13 @@
         const buildUrl = "Build";
         const loaderUrl = buildUrl + "/Web.loader.js";
         const config = {
-            dataUrl: buildUrl + "/Web.data.unityweb",
-            frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-            codeUrl: buildUrl + "/Web.wasm.unityweb",
+            dataUrl: buildUrl + "/Web.data.gz",
+            frameworkUrl: buildUrl + "/Web.framework.js.gz",
+            codeUrl: buildUrl + "/Web.wasm.gz",
         streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "Poker",
-            productVersion: "61",
+            productVersion: "0.1.300.c112.s5",
         };
 
         const container = document.querySelector("#unity-container");
@@ -55,7 +63,9 @@
         const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
         const progressBarFull = document.querySelector("#unity-progress-bar-full");
         const spinner = document.querySelector('.spinner');
+        const signInWithTelegramContainer = document.querySelector('.sign-in-with-telegram-container');
 
+        /*
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.addedNodes) {
@@ -73,6 +83,7 @@
 
         // Start observing the document body for child additions
         observer.observe(document.body, { childList: true, subtree: true });
+        */
 
         function updateCanvasHeight() {
             // Important stuff, so the canvas will not be resized by virtual keyboard.
@@ -114,9 +125,6 @@
 
         // My stuff here.
 
-        const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
-        const moduleName = "FaceStarServer"
-
         // This variables will be accessed from the unity code, so don't rename or delete.
         let authTokens = ""
         let fortuneWheelInfo = ""
@@ -124,38 +132,188 @@
         let playerBalance = ""
         let dailyRewardInfo = ""
 
-        window.initCdTma?.({ id: '6081640' }).then(show => window.show = show).catch(e => console.log(e))
+        const emailInput = document.getElementById('emailInput');
+        const codeInput = document.getElementById('codeInput');
+        const sendCodeButton = document.getElementById('sendCodeButton');
+        const signInButton = document.getElementById('signInButton');
+
+        sendCodeButton.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            try {
+                const result = await sendCodeToSignInWithEmail(email);
+                const resultAsText = await result.text();
+                if (resultAsText !== "ok") {
+                    alert("We couldn't send a sign-in code to that email address. Please check it for typos and try again.");
+                    return;
+                }
+                signInButton.hidden = false;
+                sendCodeButton.hidden = true;
+                codeInput.hidden = false;
+                emailInput.hidden = true;
+            } catch (error) {
+                console.error('Failed to send sign in code:', error);
+            }
+        });
+
+        signInButton.addEventListener('click', async () => {
+            try {
+                const result = await confirmCodeToSignInWithEmail(emailInput.value.trim(), codeInput.value.trim());
+                authTokens = await result.text();
+                if (authTokens === "") {
+                    alert("Wrong code.");
+                    return;
+                }
+                init2(authTokens)
+                console.log("Sign in code confirmed.");
+            } catch (error) {
+                console.error('Failed to confirm sign in code:', error);
+            }
+        });
+
+        const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
+        const moduleName = "FaceStarServer"
 
         init()
 
         async function init() {
             try {
-                // TODO @Med: review code.
-                var initData = window.Telegram.WebApp.initData;
+                if (isTelegramWebApp()) {
+                    console.log("Running as Telegram Mini App.");
 
-                authTokens = await fetchAuthTokens(initData);
-                const [authToken, sessionToken, playerId] = authTokens.split(" ");
+                    // TODO @Med: review code.
+                    var initData = window.Telegram.WebApp.initData;
 
-                const results = await Promise.allSettled([
-                    fetchFortuneWheelInfo(authToken),
-                    fetchAvailablePurchases(authToken),
-                    fetchPlayerBalance(authToken, playerId),
-                    fetchDailyReward(authToken)
-                ]);
+                    console.log(`init data: ${initData}`)
 
-                fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
-                availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
-                playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
-                dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
+                    authTokens = await fetchAuthTokens(initData);
+                    init2(authTokens)
+                } else {
+                    console.log("Running in regular browser.");
 
-                console.log('Fortune Wheel Info:', fortuneWheelInfo);
-                console.log('Available Purchases:', availablePurchases);
-                console.log('Player Balance:', playerBalance);
-                console.log('Daily Reward Info:', dailyRewardInfo);
+                    const script = document.createElement('script');
+
+                    script.async = true;
+                    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+                    script.setAttribute('data-telegram-login', 'Poker_TestBot_150224_201613_bot');
+                    script.setAttribute('data-size', 'large');
+                    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+                    script.setAttribute('data-request-access', 'write');
+
+                    signInWithTelegramContainer.appendChild(script);
+                }
             } catch (e) {
                 console.error('Error in init():', e);
             }
         }
+
+        async function init2(tokens) {
+            const [authToken, sessionToken, playerId] = tokens.split(" ");
+
+            const results = await Promise.allSettled([
+                fetchFortuneWheelInfo(authToken),
+                fetchAvailablePurchases(authToken),
+                fetchPlayerBalance(authToken, playerId),
+                fetchDailyReward(authToken)
+            ]);
+
+            fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
+            availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
+            playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
+            dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
+
+            console.log('Fortune Wheel Info:', fortuneWheelInfo);
+            console.log('Available Purchases:', availablePurchases);
+            console.log('Player Balance:', playerBalance);
+            console.log('Daily Reward Info:', dailyRewardInfo);
+        }
+
+        // Called when user signed-in using regular browser.
+        async function onTelegramAuth(user) {
+            try {
+                const userJson = JSON.stringify(user)
+                authTokens = await fetchAuthTokensForBrowser(userJson)
+                init2(authTokens)
+            } catch (e) {
+                console.error('Error in onTelegramAuth():', e);
+            }
+        }
+    </script>
+    <script>
+        /*
+        const box = document.getElementById('unity-logo');
+        let angle = 0;
+
+        function rotateBox() {
+            angle = (angle + 2) % 360;
+            box.style.transform = `rotateY(${angle}deg)`;
+            requestAnimationFrame(rotateBox);
+        }
+
+        rotateBox();
+        */
+    </script>
+    <script>
+        /*
+        //
+        // Generated by deepseek.
+        //
+        // Get the element to animate
+        const logo = document.getElementById('unity-logo');
+
+        // Animation parameters from Unity clip
+        const halfCycleDuration = 0.6666667; // seconds (time to go from 0° to 180°)
+        const fullCycleDuration = 1.3333334; // seconds (full animation time)
+
+        // Unity's default easing function (similar to SmoothStep)
+        function unityEasing(t) {
+            return t * t * (3 - 2 * t);
+        }
+
+        // Function to animate the logo infinitely with Unity easing
+        function animateLogoWithUnityEasing() {
+            let startTime = null;
+            let elapsedPrev;
+            let elapsed;
+            let n = 0;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+
+                // Calculate elapsed time in seconds, modulo the full cycle duration
+                elapsedPrev = elapsed;
+                elapsed = ((timestamp - startTime) / 1000) % fullCycleDuration;
+
+                if (elapsed < elapsedPrev) {
+                    n = (n + 1) % 2;
+                }
+
+                // Calculate current rotation value based on elapsed time
+                let rotationY;
+                if (elapsed <= halfCycleDuration) {
+                    // First segment (0 to 180°) with easing
+                    const normalizedTime = elapsed / halfCycleDuration;
+                    const easedTime = unityEasing(normalizedTime);
+                    rotationY = easedTime * 180;
+                } else {
+                    // Second segment (hold at 180°)
+                    rotationY = 180;
+                }
+                rotationY += 180 * n;
+
+                // Apply the rotation
+                logo.style.transform = `rotateY(${rotationY}deg)`;
+
+                // Continue the animation
+                requestAnimationFrame(step);
+            }
+
+            // Start the animation
+            requestAnimationFrame(step);
+        }
+
+        // Start the infinite animation with Unity easing
+        animateLogoWithUnityEasing();
+        */
     </script>
 </body>
 
