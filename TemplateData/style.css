@@ -35,6 +35,28 @@ body {
     width: 100%;
 }
 
+.gift-sticker canvas {
+    width: 100px;
+    height: 100px;
+    z-index: 1;
+    position: relative;
+}
+
+#gift-selection {
+    pointer-events: all;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 15px;
+    height: 350px;
+}
+
+.gift-selection__item {
+    width: 75px;
+    height: 75px;
+    background-color: white;
+}
 
 .sign-in-with-telegram-container {
     position: absolute;
@@ -62,7 +84,7 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-canvas {
+#unity-canvas {
     display: block;
     position: fixed;
     top: 0;
@@ -71,17 +93,53 @@ canvas {
     right: 0;
     width: 100%;
     overflow: hidden;
+    background: #231F20;
 }
 
 body {
     margin: 0;
 }
 
-#unity-container {}
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    overflow: hidden;
 
-#unity-canvas {
-    background: #231F20;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
 }
+
+.overlay-element {
+    position: absolute;
+    pointer-events: all;
+}
+
+.gift-view__symbol {
+    position: absolute;
+    opacity: 0.5;
+}
+
+.gift-view__sticker {
+    width: 65%;
+    height: 65%;
+    z-index: 1;
+}
+
+#gift-view {
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+#unity-container {}
 
 #loading-cover {
     top: 0;

@@ -1,3 +1,13 @@
+async function signInWithGoogle(token) {
+    return await fetch(`${origin}/api/GoogleAuth`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+}
+
 async function sendCodeToSignInWithEmail(email) {
     try {
         const request = {

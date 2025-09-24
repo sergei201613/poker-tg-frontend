@@ -13,11 +13,46 @@
 
     <script src="api-client.js"></script>
     <script src="utility.js"></script>
+    <script src="lottie-preloader.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
 </head>
 
 <body class="dark">
     <div id="unity-container" class="unity-desktop">
         <canvas id="unity-canvas"></canvas>
+        <div id="overlay" class="overlay">
+            <div id="gift-selection" style="display: none">
+                <img class="gift-selection__item">
+                <img class="gift-selection__item">
+                <img class="gift-selection__item">
+                <img class="gift-selection__item">
+            </div>
+            <div id="gift-view" class="overlay-element" style="display: none">
+                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 4%; left: 22%">
+                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 4%; left: 71%">
+                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 6%; left: 47%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 20%; left: 6%">
+                <img class="gift-view__symbol" style="opacity: 0.325; width: 10%; height: 10%; top: 15%; left: 29%">
+                <img class="gift-view__symbol" style="opacity: 0.325; width: 10%; height: 10%; top: 14%; left: 61%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 20%; left: 87%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 28%; left: 18%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 28%; left: 75%">
+                <img class="gift-view__symbol" style="opacity: 0.35; width: 11%; height: 11%; top: 43%; left: 11%">
+                <img class="gift-view__symbol" style="opacity: 0.35; width: 11%; height: 11%; top: 43%; left: 78%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 61%; left: 2%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 61%; left: 90%">
+                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 68%; left: 19%">
+                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 72%; left: 45%">
+                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 68%; left: 71%">
+                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 9%">
+                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 31%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 82%; left: 61%">
+                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 83%">
+                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 91%; left: 47%">
+                <div class="gift-view__sticker"></div>
+            </div>
+        </div>
     </div>
     <div id="loading-cover" style="display:none;">
         <div id="unity-loading-bar">
@@ -30,6 +65,7 @@
             <button id="sendCodeButton">Send Code</button>
             <input hidden type="text" id="codeInput" placeholder="Code">
             <button hidden id="signInButton">Sign In</button>
+            <div id="google-auth-button"></div>
         </div>
         <div class="text-under-sign-in">
             Play for free. <br>
@@ -43,278 +79,305 @@
             </div>
         </div>
     </div>
-    <script>
+</body>
 
-        const buildUrl = "Build";
-        const loaderUrl = buildUrl + "/Web.loader.js";
-        const config = {
-            dataUrl: buildUrl + "/Web.data.gz",
-            frameworkUrl: buildUrl + "/Web.framework.js.gz",
-            codeUrl: buildUrl + "/Web.wasm.gz",
+<script>
+
+    const buildUrl = "Build";
+    const loaderUrl = buildUrl + "/Web.loader.js";
+    const config = {
+        dataUrl: buildUrl + "/Web.data.unityweb",
+        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
+        codeUrl: buildUrl + "/Web.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "Poker",
-            productVersion: "0.1.300.c112.s5",
-        };
+        companyName: "DefaultCompany",
+        productName: "Poker",
+        productVersion: "0.1.300.c245s5",
+    };
 
-        const container = document.querySelector("#unity-container");
-        const canvas = document.querySelector("#unity-canvas");
-        const loadingCover = document.querySelector("#loading-cover");
-        const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-        const progressBarFull = document.querySelector("#unity-progress-bar-full");
-        const spinner = document.querySelector('.spinner');
-        const signInWithTelegramContainer = document.querySelector('.sign-in-with-telegram-container');
+    const container = document.querySelector("#unity-container");
+    const canvas = document.querySelector("#unity-canvas");
+    const loadingCover = document.querySelector("#loading-cover");
+    const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+    const progressBarFull = document.querySelector("#unity-progress-bar-full");
+    const spinner = document.querySelector('.spinner');
+    const signInWithTelegramContainer = document.querySelector('.sign-in-with-telegram-container');
 
-        /*
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes) {
-                    const element = document.querySelector('div:has(> input)');
-                    if (element) {
-                        console.log('Element found:', element);
-                        element.classList.add('virtual-keyboard-fix');
-                        setTimeout(() => {
-                            element.classList.remove('virtual-keyboard-fix');
-                        }, 500);
-                    }
+    // Accessed from Telegram.jslib by name.
+    const overlay = document.querySelector("#overlay");
+    const giftSelection = document.querySelector("#gift-selection");
+
+    /*
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes) {
+                const element = document.querySelector('div:has(> input)');
+                if (element) {
+                    console.log('Element found:', element);
+                    element.classList.add('virtual-keyboard-fix');
+                    setTimeout(() => {
+                        element.classList.remove('virtual-keyboard-fix');
+                    }, 500);
                 }
-            });
-        });
-
-        // Start observing the document body for child additions
-        observer.observe(document.body, { childList: true, subtree: true });
-        */
-
-        function updateCanvasHeight() {
-            // Important stuff, so the canvas will not be resized by virtual keyboard.
-            //let h = window.innerHeight + 'px'
-            let h = screen.height + 'px'
-            canvas.style.height = h;
-            canvas.height = h;
-            console.log(`updateCanvasHeight: ${h}`);
-        }
-
-        // @Cleanup
-        for (let i = 0; i < 1; i++) {
-            setTimeout(updateCanvasHeight, 60000 * i);
-        }
-
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            container.className = "unity-mobile";
-        }
-        loadingCover.style.display = "";
-
-        const script = document.createElement("script");
-        script.src = loaderUrl;
-
-        var MyGameInstance = null;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                spinner.style.display = "none";
-                progressBarEmpty.style.display = "";
-                progressBarFull.style.width = `${100 * progress}%`;
-            }).then((unityInstance) => {
-                MyGameInstance = unityInstance;
-                // We're calling this from unity code.
-                //loadingCover.style.display = "none";
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
-
-        // My stuff here.
-
-        // This variables will be accessed from the unity code, so don't rename or delete.
-        let authTokens = ""
-        let fortuneWheelInfo = ""
-        let availablePurchases = ""
-        let playerBalance = ""
-        let dailyRewardInfo = ""
-
-        const emailInput = document.getElementById('emailInput');
-        const codeInput = document.getElementById('codeInput');
-        const sendCodeButton = document.getElementById('sendCodeButton');
-        const signInButton = document.getElementById('signInButton');
-
-        sendCodeButton.addEventListener('click', async () => {
-            const email = emailInput.value.trim();
-            try {
-                const result = await sendCodeToSignInWithEmail(email);
-                const resultAsText = await result.text();
-                if (resultAsText !== "ok") {
-                    alert("We couldn't send a sign-in code to that email address. Please check it for typos and try again.");
-                    return;
-                }
-                signInButton.hidden = false;
-                sendCodeButton.hidden = true;
-                codeInput.hidden = false;
-                emailInput.hidden = true;
-            } catch (error) {
-                console.error('Failed to send sign in code:', error);
             }
         });
+    });
 
-        signInButton.addEventListener('click', async () => {
-            try {
-                const result = await confirmCodeToSignInWithEmail(emailInput.value.trim(), codeInput.value.trim());
-                authTokens = await result.text();
-                if (authTokens === "") {
-                    alert("Wrong code.");
-                    return;
-                }
+    // Start observing the document body for child additions
+    observer.observe(document.body, { childList: true, subtree: true });
+    */
+
+    function updateCanvasHeight() {
+        // Important stuff, so the canvas will not be resized by virtual keyboard.
+        //let h = window.innerHeight + 'px'
+        //let h = screen.availHeight + 'px'
+        let h = window.innerHeight + 'px'
+        canvas.style.height = h;
+        canvas.height = h;
+        console.log(`updateCanvasHeight: ${h}`);
+
+        const overlay = document.getElementById("overlay")
+        overlay.style.height = h
+    }
+
+    // @Cleanup
+    for (let i = 0; i < 1; i++) {
+        setTimeout(updateCanvasHeight, 60000 * i);
+    }
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+    }
+    loadingCover.style.display = "";
+
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+
+    var MyGameInstance = null;
+    script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+            spinner.style.display = "none";
+            progressBarEmpty.style.display = "";
+            progressBarFull.style.width = `${100 * progress}%`;
+        }).then((unityInstance) => {
+            MyGameInstance = unityInstance;
+            // We're calling this from unity code.
+            //loadingCover.style.display = "none";
+        }).catch((message) => {
+            alert(message);
+        });
+    };
+    document.body.appendChild(script);
+
+    // My stuff here.
+
+    // This variables will be accessed from the unity code, so don't rename or delete.
+    let authTokens = ""
+    let fortuneWheelInfo = ""
+    let availablePurchases = ""
+    let playerBalance = ""
+    let dailyRewardInfo = ""
+    const lottiePreloader = new LottiePreloader();
+
+    const emailInput = document.getElementById('emailInput');
+    const codeInput = document.getElementById('codeInput');
+    const sendCodeButton = document.getElementById('sendCodeButton');
+    const signInButton = document.getElementById('signInButton');
+
+    sendCodeButton.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+        try {
+            const result = await sendCodeToSignInWithEmail(email);
+            const resultAsText = await result.text();
+            if (resultAsText !== "ok") {
+                alert("We couldn't send a sign-in code to that email address. Please check it for typos and try again.");
+                return;
+            }
+            signInButton.hidden = false;
+            sendCodeButton.hidden = true;
+            codeInput.hidden = false;
+            emailInput.hidden = true;
+        } catch (error) {
+            console.error('Failed to send sign in code:', error);
+        }
+    });
+
+    signInButton.addEventListener('click', async () => {
+        try {
+            const result = await confirmCodeToSignInWithEmail(emailInput.value.trim(), codeInput.value.trim());
+            authTokens = await result.text();
+            if (authTokens === "") {
+                alert("Wrong code.");
+                return;
+            }
+            init2(authTokens)
+            console.log("Sign in code confirmed.");
+        } catch (error) {
+            console.error('Failed to confirm sign in code:', error);
+        }
+    });
+
+    const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
+    const moduleName = "FaceStarServer"
+
+    init()
+
+    async function init() {
+        try {
+            if (isTelegramWebApp()) {
+                console.log("Running as Telegram Mini App.");
+
+                // TODO @Med: review code.
+                var initData = window.Telegram.WebApp.initData;
+
+                console.log(`init data: ${initData}`)
+
+                authTokens = await fetchAuthTokens(initData);
                 init2(authTokens)
-                console.log("Sign in code confirmed.");
-            } catch (error) {
-                console.error('Failed to confirm sign in code:', error);
+            } else {
+                console.log("Running in regular browser.");
+
+                const script = document.createElement('script');
+
+                script.async = true;
+                script.src = 'https://telegram.org/js/telegram-widget.js?22';
+                script.setAttribute('data-telegram-login', 'Poker_TestBot_150224_201613_bot');
+                script.setAttribute('data-size', 'large');
+                script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+                script.setAttribute('data-request-access', 'write');
+
+                signInWithTelegramContainer.appendChild(script);
             }
-        });
-
-        const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
-        const moduleName = "FaceStarServer"
-
-        init()
-
-        async function init() {
-            try {
-                if (isTelegramWebApp()) {
-                    console.log("Running as Telegram Mini App.");
-
-                    // TODO @Med: review code.
-                    var initData = window.Telegram.WebApp.initData;
-
-                    console.log(`init data: ${initData}`)
-
-                    authTokens = await fetchAuthTokens(initData);
-                    init2(authTokens)
-                } else {
-                    console.log("Running in regular browser.");
-
-                    const script = document.createElement('script');
-
-                    script.async = true;
-                    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-                    script.setAttribute('data-telegram-login', 'Poker_TestBot_150224_201613_bot');
-                    script.setAttribute('data-size', 'large');
-                    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-                    script.setAttribute('data-request-access', 'write');
-
-                    signInWithTelegramContainer.appendChild(script);
-                }
-            } catch (e) {
-                console.error('Error in init():', e);
-            }
+        } catch (e) {
+            console.error('Error in init():', e);
         }
+    }
 
-        async function init2(tokens) {
-            const [authToken, sessionToken, playerId] = tokens.split(" ");
+    async function init2(tokens) {
+        authTokens = tokens;
+        const [authToken, sessionToken, playerId] = tokens.split(" ");
 
-            const results = await Promise.allSettled([
-                fetchFortuneWheelInfo(authToken),
-                fetchAvailablePurchases(authToken),
-                fetchPlayerBalance(authToken, playerId),
-                fetchDailyReward(authToken)
-            ]);
+        const results = await Promise.allSettled([
+            fetchFortuneWheelInfo(authToken),
+            fetchAvailablePurchases(authToken),
+            fetchPlayerBalance(authToken, playerId),
+            fetchDailyReward(authToken)
+        ]);
 
-            fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
-            availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
-            playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
-            dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
+        fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
+        availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
+        playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
+        dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
 
-            console.log('Fortune Wheel Info:', fortuneWheelInfo);
-            console.log('Available Purchases:', availablePurchases);
-            console.log('Player Balance:', playerBalance);
-            console.log('Daily Reward Info:', dailyRewardInfo);
+        console.log('Fortune Wheel Info:', fortuneWheelInfo);
+        console.log('Available Purchases:', availablePurchases);
+        console.log('Player Balance:', playerBalance);
+        console.log('Daily Reward Info:', dailyRewardInfo);
+    }
+
+    // Called when user signed-in using regular browser.
+    async function onTelegramAuth(user) {
+        try {
+            const userJson = JSON.stringify(user)
+            authTokens = await fetchAuthTokensForBrowser(userJson)
+            init2(authTokens)
+        } catch (e) {
+            console.error('Error in onTelegramAuth():', e)
         }
+    }
+</script>
 
-        // Called when user signed-in using regular browser.
-        async function onTelegramAuth(user) {
-            try {
-                const userJson = JSON.stringify(user)
-                authTokens = await fetchAuthTokensForBrowser(userJson)
-                init2(authTokens)
-            } catch (e) {
-                console.error('Error in onTelegramAuth():', e);
-            }
+<script>
+    const children = giftSelection.children
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i]
+        child.onclick = function () {
+            giftSelection.style.display = 'none'
+            MyGameInstance.SendMessage("Telegram_Interaction", "HandleGiftSending", i)
         }
-    </script>
-    <script>
-        /*
-        const box = document.getElementById('unity-logo');
-        let angle = 0;
+    }
+</script>
 
-        function rotateBox() {
-            angle = (angle + 2) % 360;
-            box.style.transform = `rotateY(${angle}deg)`;
-            requestAnimationFrame(rotateBox);
-        }
+<!-- To sign in with google -->
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="google-auth.js"></script>
+<script>
+    /*
+    const box = document.getElementById('unity-logo');
+    let angle = 0;
 
-        rotateBox();
-        */
-    </script>
-    <script>
-        /*
-        //
-        // Generated by deepseek.
-        //
-        // Get the element to animate
-        const logo = document.getElementById('unity-logo');
+    function rotateBox() {
+        angle = (angle + 2) % 360;
+        box.style.transform = `rotateY(${angle}deg)`;
+        requestAnimationFrame(rotateBox);
+    }
 
-        // Animation parameters from Unity clip
-        const halfCycleDuration = 0.6666667; // seconds (time to go from 0° to 180°)
-        const fullCycleDuration = 1.3333334; // seconds (full animation time)
+    rotateBox();
+    */
+</script>
+<script>
+    /*
+    //
+    // Generated by deepseek.
+    //
+    // Get the element to animate
+    const logo = document.getElementById('unity-logo');
 
-        // Unity's default easing function (similar to SmoothStep)
-        function unityEasing(t) {
-            return t * t * (3 - 2 * t);
-        }
+    // Animation parameters from Unity clip
+    const halfCycleDuration = 0.6666667; // seconds (time to go from 0° to 180°)
+    const fullCycleDuration = 1.3333334; // seconds (full animation time)
 
-        // Function to animate the logo infinitely with Unity easing
-        function animateLogoWithUnityEasing() {
-            let startTime = null;
-            let elapsedPrev;
-            let elapsed;
-            let n = 0;
+    // Unity's default easing function (similar to SmoothStep)
+    function unityEasing(t) {
+        return t * t * (3 - 2 * t);
+    }
 
-            function step(timestamp) {
-                if (!startTime) startTime = timestamp;
+    // Function to animate the logo infinitely with Unity easing
+    function animateLogoWithUnityEasing() {
+        let startTime = null;
+        let elapsedPrev;
+        let elapsed;
+        let n = 0;
 
-                // Calculate elapsed time in seconds, modulo the full cycle duration
-                elapsedPrev = elapsed;
-                elapsed = ((timestamp - startTime) / 1000) % fullCycleDuration;
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
 
-                if (elapsed < elapsedPrev) {
-                    n = (n + 1) % 2;
-                }
+            // Calculate elapsed time in seconds, modulo the full cycle duration
+            elapsedPrev = elapsed;
+            elapsed = ((timestamp - startTime) / 1000) % fullCycleDuration;
 
-                // Calculate current rotation value based on elapsed time
-                let rotationY;
-                if (elapsed <= halfCycleDuration) {
-                    // First segment (0 to 180°) with easing
-                    const normalizedTime = elapsed / halfCycleDuration;
-                    const easedTime = unityEasing(normalizedTime);
-                    rotationY = easedTime * 180;
-                } else {
-                    // Second segment (hold at 180°)
-                    rotationY = 180;
-                }
-                rotationY += 180 * n;
-
-                // Apply the rotation
-                logo.style.transform = `rotateY(${rotationY}deg)`;
-
-                // Continue the animation
-                requestAnimationFrame(step);
+            if (elapsed < elapsedPrev) {
+                n = (n + 1) % 2;
             }
 
-            // Start the animation
+            // Calculate current rotation value based on elapsed time
+            let rotationY;
+            if (elapsed <= halfCycleDuration) {
+                // First segment (0 to 180°) with easing
+                const normalizedTime = elapsed / halfCycleDuration;
+                const easedTime = unityEasing(normalizedTime);
+                rotationY = easedTime * 180;
+            } else {
+                // Second segment (hold at 180°)
+                rotationY = 180;
+            }
+            rotationY += 180 * n;
+
+            // Apply the rotation
+            logo.style.transform = `rotateY(${rotationY}deg)`;
+
+            // Continue the animation
             requestAnimationFrame(step);
         }
 
-        // Start the infinite animation with Unity easing
-        animateLogoWithUnityEasing();
-        */
-    </script>
+        // Start the animation
+        requestAnimationFrame(step);
+    }
+
+    // Start the infinite animation with Unity easing
+    animateLogoWithUnityEasing();
+    */
+</script>
 </body>
 
 </html>
