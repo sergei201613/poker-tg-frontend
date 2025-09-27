@@ -1,383 +1,127 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-<head>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=overlays-content">
-    <title>Poker</title>
+    <title>Unity Web Player | LottieWebGLTest</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <script src="api-client.js"></script>
-    <script src="utility.js"></script>
-    <script src="lottie-preloader.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
-</head>
-
-<body class="dark">
+  </head>
+  <body>
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas"></canvas>
-        <div id="overlay" class="overlay">
-            <div id="gift-selection" style="display: none">
-                <img class="gift-selection__item">
-                <img class="gift-selection__item">
-                <img class="gift-selection__item">
-                <img class="gift-selection__item">
-            </div>
-            <div id="gift-view" class="overlay-element" style="display: none">
-                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 4%; left: 22%">
-                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 4%; left: 71%">
-                <img class="gift-view__symbol" style="opacity: 0.2; width: 6%; height: 6%; top: 6%; left: 47%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 20%; left: 6%">
-                <img class="gift-view__symbol" style="opacity: 0.325; width: 10%; height: 10%; top: 15%; left: 29%">
-                <img class="gift-view__symbol" style="opacity: 0.325; width: 10%; height: 10%; top: 14%; left: 61%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 20%; left: 87%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 28%; left: 18%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 28%; left: 75%">
-                <img class="gift-view__symbol" style="opacity: 0.35; width: 11%; height: 11%; top: 43%; left: 11%">
-                <img class="gift-view__symbol" style="opacity: 0.35; width: 11%; height: 11%; top: 43%; left: 78%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 61%; left: 2%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 61%; left: 90%">
-                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 68%; left: 19%">
-                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 72%; left: 45%">
-                <img class="gift-view__symbol" style="opacity: 0.3; width: 9%; height: 9%; top: 68%; left: 71%">
-                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 9%">
-                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 31%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 82%; left: 61%">
-                <img class="gift-view__symbol" style="opacity: 0.275; width: 8%; height: 8%; top: 82%; left: 83%">
-                <img class="gift-view__symbol" style="opacity: 0.25; width: 7%; height: 7%; top: 91%; left: 47%">
-                <div class="gift-view__sticker"></div>
-            </div>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">LottieWebGLTest</div>
+      </div>
     </div>
-    <div id="loading-cover" style="display:none;">
-        <div id="unity-loading-bar">
-            <div class="logo" id="unity-logo"><img src="Logo_Dynamic.png"></div>
-            <div class="logo"><img src="Logo_Static.png"></div>
-            <div class="spinner"></div>
-        </div>
-        <div class="sign-in-with-telegram-container">
-            <input type="email" id="emailInput" placeholder="Email">
-            <button id="sendCodeButton">Send Code</button>
-            <input hidden type="text" id="codeInput" placeholder="Code">
-            <button hidden id="signInButton">Sign In</button>
-            <div id="google-auth-button"></div>
-        </div>
-        <div class="text-under-sign-in">
-            Play for free. <br>
-            No risks, no money.
-        </div>
-        <div id="progress-bar">
-            <div id="unity-progress-bar-empty" style="display: none;">
-                <div id="progress-bar-full-container">
-                    <div id="unity-progress-bar-full"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
 
-<script>
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
 
-    const buildUrl = "Build";
-    const loaderUrl = buildUrl + "/Web.loader.js";
-    const config = {
-        dataUrl: buildUrl + "/Web.data.unityweb",
-        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-        codeUrl: buildUrl + "/Web.wasm.unityweb",
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Web.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Web.data.br",
+        frameworkUrl: buildUrl + "/Web.framework.js.br",
+        codeUrl: buildUrl + "/Web.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
-        productName: "Poker",
-        productVersion: "0.1.300.c245s5",
-    };
+        productName: "LottieWebGLTest",
+        productVersion: "0.1.0",
+        showBanner: unityShowBanner,
+      };
 
-    const container = document.querySelector("#unity-container");
-    const canvas = document.querySelector("#unity-canvas");
-    const loadingCover = document.querySelector("#loading-cover");
-    const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-    const progressBarFull = document.querySelector("#unity-progress-bar-full");
-    const spinner = document.querySelector('.spinner');
-    const signInWithTelegramContainer = document.querySelector('.sign-in-with-telegram-container');
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
 
-    // Accessed from Telegram.jslib by name.
-    const overlay = document.querySelector("#overlay");
-    const giftSelection = document.querySelector("#gift-selection");
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
 
-    /*
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.addedNodes) {
-                const element = document.querySelector('div:has(> input)');
-                if (element) {
-                    console.log('Element found:', element);
-                    element.classList.add('virtual-keyboard-fix');
-                    setTimeout(() => {
-                        element.classList.remove('virtual-keyboard-fix');
-                    }, 500);
-                }
-            }
-        });
-    });
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
 
-    // Start observing the document body for child additions
-    observer.observe(document.body, { childList: true, subtree: true });
-    */
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
 
-    function updateCanvasHeight() {
-        // Important stuff, so the canvas will not be resized by virtual keyboard.
-        //let h = window.innerHeight + 'px'
-        //let h = screen.availHeight + 'px'
-        let h = window.innerHeight + 'px'
-        canvas.style.height = h;
-        canvas.height = h;
-        console.log(`updateCanvasHeight: ${h}`);
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
 
-        const overlay = document.getElementById("overlay")
-        overlay.style.height = h
-    }
 
-    // @Cleanup
-    for (let i = 0; i < 1; i++) {
-        setTimeout(updateCanvasHeight, 60000 * i);
-    }
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
 
-    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-    }
-    loadingCover.style.display = "";
+      document.querySelector("#unity-loading-bar").style.display = "block";
 
-    const script = document.createElement("script");
-    script.src = loaderUrl;
-
-    var MyGameInstance = null;
-    script.onload = () => {
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-            spinner.style.display = "none";
-            progressBarEmpty.style.display = "";
-            progressBarFull.style.width = `${100 * progress}%`;
-        }).then((unityInstance) => {
-            MyGameInstance = unityInstance;
-            // We're calling this from unity code.
-            //loadingCover.style.display = "none";
-        }).catch((message) => {
-            alert(message);
-        });
-    };
-    document.body.appendChild(script);
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
 
-    // My stuff here.
+              }).catch((message) => {
+                alert(message);
+              });
+            };
 
-    // This variables will be accessed from the unity code, so don't rename or delete.
-    let authTokens = ""
-    let fortuneWheelInfo = ""
-    let availablePurchases = ""
-    let playerBalance = ""
-    let dailyRewardInfo = ""
-    const lottiePreloader = new LottiePreloader();
+      document.body.appendChild(script);
 
-    const emailInput = document.getElementById('emailInput');
-    const codeInput = document.getElementById('codeInput');
-    const sendCodeButton = document.getElementById('sendCodeButton');
-    const signInButton = document.getElementById('signInButton');
-
-    sendCodeButton.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
-        try {
-            const result = await sendCodeToSignInWithEmail(email);
-            const resultAsText = await result.text();
-            if (resultAsText !== "ok") {
-                alert("We couldn't send a sign-in code to that email address. Please check it for typos and try again.");
-                return;
-            }
-            signInButton.hidden = false;
-            sendCodeButton.hidden = true;
-            codeInput.hidden = false;
-            emailInput.hidden = true;
-        } catch (error) {
-            console.error('Failed to send sign in code:', error);
-        }
-    });
-
-    signInButton.addEventListener('click', async () => {
-        try {
-            const result = await confirmCodeToSignInWithEmail(emailInput.value.trim(), codeInput.value.trim());
-            authTokens = await result.text();
-            if (authTokens === "") {
-                alert("Wrong code.");
-                return;
-            }
-            init2(authTokens)
-            console.log("Sign in code confirmed.");
-        } catch (error) {
-            console.error('Failed to confirm sign in code:', error);
-        }
-    });
-
-    const projectId = "3f6d92bc-5940-4f0c-9fc0-2aa3d9d7feb4"
-    const moduleName = "FaceStarServer"
-
-    init()
-
-    async function init() {
-        try {
-            if (isTelegramWebApp()) {
-                console.log("Running as Telegram Mini App.");
-
-                // TODO @Med: review code.
-                var initData = window.Telegram.WebApp.initData;
-
-                console.log(`init data: ${initData}`)
-
-                authTokens = await fetchAuthTokens(initData);
-                init2(authTokens)
-            } else {
-                console.log("Running in regular browser.");
-
-                const script = document.createElement('script');
-
-                script.async = true;
-                script.src = 'https://telegram.org/js/telegram-widget.js?22';
-                script.setAttribute('data-telegram-login', 'Poker_TestBot_150224_201613_bot');
-                script.setAttribute('data-size', 'large');
-                script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-                script.setAttribute('data-request-access', 'write');
-
-                signInWithTelegramContainer.appendChild(script);
-            }
-        } catch (e) {
-            console.error('Error in init():', e);
-        }
-    }
-
-    async function init2(tokens) {
-        authTokens = tokens;
-        const [authToken, sessionToken, playerId] = tokens.split(" ");
-
-        const results = await Promise.allSettled([
-            fetchFortuneWheelInfo(authToken),
-            fetchAvailablePurchases(authToken),
-            fetchPlayerBalance(authToken, playerId),
-            fetchDailyReward(authToken)
-        ]);
-
-        fortuneWheelInfo = results[0].status === 'fulfilled' ? results[0].value : "";
-        availablePurchases = results[1].status === 'fulfilled' ? results[1].value : "";
-        playerBalance = results[2].status === 'fulfilled' ? results[2].value : "";
-        dailyRewardInfo = results[3].status === 'fulfilled' ? results[3].value : "";
-
-        console.log('Fortune Wheel Info:', fortuneWheelInfo);
-        console.log('Available Purchases:', availablePurchases);
-        console.log('Player Balance:', playerBalance);
-        console.log('Daily Reward Info:', dailyRewardInfo);
-    }
-
-    // Called when user signed-in using regular browser.
-    async function onTelegramAuth(user) {
-        try {
-            const userJson = JSON.stringify(user)
-            authTokens = await fetchAuthTokensForBrowser(userJson)
-            init2(authTokens)
-        } catch (e) {
-            console.error('Error in onTelegramAuth():', e)
-        }
-    }
-</script>
-
-<script>
-    const children = giftSelection.children
-    for (let i = 0; i < children.length; i++) {
-        const child = children[i]
-        child.onclick = function () {
-            giftSelection.style.display = 'none'
-            MyGameInstance.SendMessage("Telegram_Interaction", "HandleGiftSending", i)
-        }
-    }
-</script>
-
-<!-- To sign in with google -->
-<script src="https://accounts.google.com/gsi/client" async></script>
-<script src="google-auth.js"></script>
-<script>
-    /*
-    const box = document.getElementById('unity-logo');
-    let angle = 0;
-
-    function rotateBox() {
-        angle = (angle + 2) % 360;
-        box.style.transform = `rotateY(${angle}deg)`;
-        requestAnimationFrame(rotateBox);
-    }
-
-    rotateBox();
-    */
-</script>
-<script>
-    /*
-    //
-    // Generated by deepseek.
-    //
-    // Get the element to animate
-    const logo = document.getElementById('unity-logo');
-
-    // Animation parameters from Unity clip
-    const halfCycleDuration = 0.6666667; // seconds (time to go from 0° to 180°)
-    const fullCycleDuration = 1.3333334; // seconds (full animation time)
-
-    // Unity's default easing function (similar to SmoothStep)
-    function unityEasing(t) {
-        return t * t * (3 - 2 * t);
-    }
-
-    // Function to animate the logo infinitely with Unity easing
-    function animateLogoWithUnityEasing() {
-        let startTime = null;
-        let elapsedPrev;
-        let elapsed;
-        let n = 0;
-
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-
-            // Calculate elapsed time in seconds, modulo the full cycle duration
-            elapsedPrev = elapsed;
-            elapsed = ((timestamp - startTime) / 1000) % fullCycleDuration;
-
-            if (elapsed < elapsedPrev) {
-                n = (n + 1) % 2;
-            }
-
-            // Calculate current rotation value based on elapsed time
-            let rotationY;
-            if (elapsed <= halfCycleDuration) {
-                // First segment (0 to 180°) with easing
-                const normalizedTime = elapsed / halfCycleDuration;
-                const easedTime = unityEasing(normalizedTime);
-                rotationY = easedTime * 180;
-            } else {
-                // Second segment (hold at 180°)
-                rotationY = 180;
-            }
-            rotationY += 180 * n;
-
-            // Apply the rotation
-            logo.style.transform = `rotateY(${rotationY}deg)`;
-
-            // Continue the animation
-            requestAnimationFrame(step);
-        }
-
-        // Start the animation
-        requestAnimationFrame(step);
-    }
-
-    // Start the infinite animation with Unity easing
-    animateLogoWithUnityEasing();
-    */
-</script>
-</body>
-
+    </script>
+  </body>
 </html>
